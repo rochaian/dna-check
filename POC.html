@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Detecção de DNA Sigmano</title>
+</head>
+<body>
+    <h1>Detecção de DNA Sigmano</h1>
+    <p>Insira sua sequência de DNA (em linhas separadas):</p>
+    <textarea id="dna-input" rows="6" cols="4"></textarea><br>
+    <button onclick="checkDNA()">Verificar DNA</button>
+    <p id="result"></p>
+
+    <script>
+        function checkDNA() {
+            const dnaInput = document.getElementById("dna-input").value.trim().split("\n");
+            const isSigmano = detectSigmano(dnaInput);
+            document.getElementById("result").innerText = isSigmano ? "O DNA é de um sigmano" : "O DNA é de um humano";
+        }
+
+        function detectSigmano(dna) {
+            const n = dna.length;
+
+            // Verifica linhas horizontais
+            for (let row of dna) {
+                if (hasConsecutiveIdenticalLetters(row)) {
+                    return true;
+                }
+            }
+
+            // Verifica linhas verticais
+            for (let col = 0; col < n; col++) {
+                let column = "";
+                for (let row = 0; row < n; row++) {
+                    column += dna[row][col];
+                }
+                if (hasConsecutiveIdenticalLetters(column)) {
+                    return true;
+                }
+            }
+
+            // Verifica diagonais (diagonal principal)
+            for (let i = 0; i <= n - 4; i++) {
+                let diagonal1 = "";
+                let diagonal2 = "";
+                for (let j = 0; j <= n - 4; j++) {
+                    // Diagonal principal
+                    diagonal1 += dna[i + j][j];
+                    // Diagonal secundária
+                    diagonal2 += dna[j][i + j];
+                }
+                if (hasConsecutiveIdenticalLetters(diagonal1) || hasConsecutiveIdenticalLetters(diagonal2)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function hasConsecutiveIdenticalLetters(str) {
+            for (let i = 0; i <= str.length - 4; i++) {
+                const sequence = str.slice(i, i + 4);
+                if (sequence[0] === sequence[1] && sequence[1] === sequence[2] && sequence[2] === sequence[3]) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    </script>
+</body>
+</html>
