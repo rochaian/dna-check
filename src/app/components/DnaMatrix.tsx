@@ -10,11 +10,10 @@ const DnaMatrix: React.FC = () => {
     const [cols, setCols] = useState(4); //Variável de estado das Colunas
 
     const [showPopup, setShowPopup] = useState(false); // Controla a visibilidade do popup
+    const [result, setResult] = useState('');
 
     //Variável de estado da matriz bidimencional que armazena as informações do DNA
     const [dna, setDna] = useState(Array(rows).fill(Array(cols).fill('')));
-
-    const inputRefs = useRef<HTMLDivElement>(null);
 
     /* handleCheckDNA
     Processo de verificação do DNA */
@@ -27,6 +26,7 @@ const DnaMatrix: React.FC = () => {
         checkDna(dna).then((result) => {
             // Lida com o resultado retornado pela API
             console.log('Resultado da API:', result);
+            setResult(result.dnaResult);
         });
 
         handleShowPopup();
@@ -51,7 +51,11 @@ const DnaMatrix: React.FC = () => {
 
     const handleShowPopup = () => {
         setShowPopup(true); // Define o estado para exibir o popup
-      };
+    };
+
+    const handleClosePopup = () => {
+        setShowPopup(false); // Define como invisível
+    };
 
 
     // Função para verificar sequências horizontais de quatro letras iguais
@@ -210,71 +214,71 @@ const DnaMatrix: React.FC = () => {
 
     return (
         <>
-        {/* Exibe o AlertPopup somente se showPopup for verdadeiro */}
-        {/* {showPopup && <ResultPopup message="Esta é uma mensagem de alerta!" />} */}
-        
-        <ResultPopup message="Esta é uma mensagem de alerta!" />
-        <div className='text-center'>
-            
+            {/* Exibe o AlertPopup somente se showPopup for verdadeiro */}
+            {showPopup && <ResultPopup message={result} onClose={handleClosePopup}/>}
+
+            {/* <ResultPopup message="Esta é uma mensagem de alerta!" /> */}
             <div className='text-center'>
-                <div className='flex-colunms'>
-                    <label className='text-[28px] block leading-[18px]'> {rows}</label>
-                    <label className='text-[12px] text-[#afb3ff]'>Linhas</label>
+
+                <div className='text-center'>
+                    <div className='flex-colunms'>
+                        <label className='text-[28px] block leading-[18px]'> {rows}</label>
+                        <label className='text-[12px] text-[#afb3ff]'>Linhas</label>
+                    </div>
+                    <input
+                        className='w-[40vw]'
+                        type="range"
+                        min="1"
+                        max="20"
+                        value={rows}
+                        onChange={(e) => {
+                            setRows(parseInt(e.target.value));
+                            setDna(Array(parseInt(e.target.value)).fill(Array(cols).fill(''))); //Atualiza matriz alterando a quantidade de linhas
+                        }}
+                    />
                 </div>
-                <input
-                    className='w-[40vw]'
-                    type="range"
-                    min="1"
-                    max="20"
-                    value={rows}
-                    onChange={(e) => {
-                        setRows(parseInt(e.target.value));
-                        setDna(Array(parseInt(e.target.value)).fill(Array(cols).fill(''))); //Atualiza matriz alterando a quantidade de linhas
-                    }}
-                />
-            </div>
-            <div className='text-center'>
-                <div className='flex-colunms'>
-                    <label className='text-[28px] block leading-[18px] pt-2'>{cols} </label>
-                    <label className='text-[12px] text-[#afb3ff]'>Colunas</label>
+                <div className='text-center'>
+                    <div className='flex-colunms'>
+                        <label className='text-[28px] block leading-[18px] pt-2'>{cols} </label>
+                        <label className='text-[12px] text-[#afb3ff]'>Colunas</label>
+                    </div>
+
+                    <input
+                        className='w-[40vw] bg-[#e81153]'
+                        type="range"
+                        min="1"
+                        max="20"
+                        value={cols}
+
+                        onChange={(e) => {
+                            setCols(parseInt(e.target.value));
+                            setDna(Array(rows).fill(Array(parseInt(e.target.value)).fill(''))); //Atualiza matriz alterando a quantidade de Colunas
+                        }}
+                    />
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 50px)`, gap: '5px', padding: '50px', justifyContent: 'center' }}>
+                    {dna.map((row, rowIndex) => (
+                        <React.Fragment key={`row-${rowIndex}`}>
+                            {row.map((col: string | number | readonly string[] | undefined, colIndex: number) => (
+                                <input
+                                    key={`input-${rowIndex}-${colIndex}`}
+                                    id={`input-${rowIndex}-${colIndex}`}
+                                    type="text"
+                                    value={col}
+                                    onFocus={(e) => e.target.select()}
+                                    maxLength={1}
+                                    style={{ textAlign: 'center', fontSize: '30px', color: 'black' }}
+                                    onChange={(e) => handleChange(e, rowIndex, colIndex)}
+                                    onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
+                                />
+                            ))}
+                        </React.Fragment>
+                    ))}
                 </div>
 
-                <input
-                    className='w-[40vw] bg-[#e81153]'
-                    type="range"
-                    min="1"
-                    max="20"
-                    value={cols}
-
-                    onChange={(e) => {
-                        setCols(parseInt(e.target.value));
-                        setDna(Array(rows).fill(Array(parseInt(e.target.value)).fill(''))); //Atualiza matriz alterando a quantidade de Colunas
-                    }}
-                />
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: `repeat(${cols}, 50px)`, gap: '5px', padding: '50px', justifyContent: 'center' }}>
-                {dna.map((row, rowIndex) => (
-                    <React.Fragment key={`row-${rowIndex}`}>
-                        {row.map((col: string | number | readonly string[] | undefined, colIndex: number) => (
-                            <input
-                                key={`input-${rowIndex}-${colIndex}`}
-                                id={`input-${rowIndex}-${colIndex}`}
-                                type="text"
-                                value={col}
-                                onFocus={(e) => e.target.select()}
-                                maxLength={1}
-                                style={{ textAlign: 'center', fontSize: '30px', color: 'black' }}
-                                onChange={(e) => handleChange(e, rowIndex, colIndex)}
-                                onKeyDown={(e) => handleKeyDown(e, rowIndex, colIndex)}
-                            />
-                        ))}
-                    </React.Fragment>
-                ))}
-            </div>
-
-            <div>
-                <button
-                    className="
+                <div>
+                    <button
+                        className="
                             rounded-[3rem]
                             bg-[#e81153]
                             text-white
@@ -291,11 +295,11 @@ const DnaMatrix: React.FC = () => {
                             ease-in-out
                             duration-200
                         "
-                        style={{borderRadius: '3rem !important'}}
-                    onClick={handleCheckDNA} // Chama o callback quando clicado
-                >CHECK DNA</button>
+                        style={{ borderRadius: '3rem !important' }}
+                        onClick={handleCheckDNA} // Chama o callback quando clicado
+                    >CHECK DNA</button>
+                </div>
             </div>
-        </div>
         </>
     );
 };
