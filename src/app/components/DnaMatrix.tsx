@@ -27,9 +27,10 @@ const DnaMatrix: React.FC = () => {
             // Lida com o resultado retornado pela API
             console.log('Resultado da API:', result);
             setResult(result.dnaResult);
+            handleShowPopup();
+
         });
 
-        handleShowPopup();
 
         // // Verifica se há sequências de quatro letras iguais no DNA
         // const hasSequences = checkDnaSequences(dna);
@@ -215,7 +216,7 @@ const DnaMatrix: React.FC = () => {
     return (
         <>
             {/* Exibe o AlertPopup somente se showPopup for verdadeiro */}
-            {showPopup && <ResultPopup message={result} onClose={handleClosePopup}/>}
+            {showPopup && <ResultPopup message={result} onClose={handleClosePopup} />}
 
             {/* <ResultPopup message="Esta é uma mensagem de alerta!" /> */}
             <div className='text-center'>

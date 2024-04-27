@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 
 interface ResultPopupProps {
   message: string; // Mensagem a ser exibida no popup
