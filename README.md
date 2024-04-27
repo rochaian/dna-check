@@ -2,6 +2,12 @@
 
 O DNA Check é um aplicativo de frontend que permite aos usuários verificar sequências de DNA para padrões ou anomalias específicas. Este projeto é desenvolvido com [Next](https://nextjs.org/), utilizando [Tailwind CSS](https://tailwindcss.com/) para estilização e [TypeScript](https://www.typescriptlang.org/) para maior segurança de tipos.
 
+Você pode testar o projeto acessando o link
+[Frontend](https://dna-check.vercel.app/)
+[Backend](https://dna-check-server.onrender.com)
+
+
+
 ## Configuração e Instalação
 
 Para configurar o ambiente de desenvolvimento e instalar todas as dependências necessárias, siga estas etapas:
