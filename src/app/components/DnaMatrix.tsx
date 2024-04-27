@@ -1,5 +1,7 @@
 'use client'
 import React, { useRef, useState } from 'react';
+import { checkDna } from '../service/apiService';
+import ResultPopup from './ResultPopup';
 
 const allowedChars = ['A', 'T', 'C', 'G'];
 
@@ -7,35 +9,49 @@ const DnaMatrix: React.FC = () => {
     const [rows, setRows] = useState(4); //Variável de estado das Linhas
     const [cols, setCols] = useState(4); //Variável de estado das Colunas
 
+    const [showPopup, setShowPopup] = useState(false); // Controla a visibilidade do popup
+
     //Variável de estado da matriz bidimencional que armazena as informações do DNA
     const [dna, setDna] = useState(Array(rows).fill(Array(cols).fill('')));
 
     const inputRefs = useRef<HTMLDivElement>(null);
 
-    /* @handleCheckDNA
+    /* handleCheckDNA
     Processo de verificação do DNA */
     function handleCheckDNA(): void {
 
         console.log('Checando DNA');
 
         console.log(dna);
-        // Verifica se há sequências de quatro letras iguais no DNA
-        const hasSequences = checkDnaSequences(dna);
 
-        const horizontal = checkHorizontal(dna);
-        const vertical = checkVertical(dna);
-        const diagonalP = checkDiagonalPrincipal(dna);
-        const diagonalS = checkDiagonalSecundaria(dna);
+        checkDna(dna).then((result) => {
+            // Lida com o resultado retornado pela API
+            console.log('Resultado da API:', result);
+        });
 
-        console.log('horizontal', horizontal);
-        console.log('vertical', vertical);
-        console.log('diagonalP', diagonalP);
-        console.log('diagonalS', diagonalS);
+        handleShowPopup();
 
-        // Imprime o resultado no console
-        console.log('O DNA contém sequências iguais de quatro letras:', hasSequences);
+        // // Verifica se há sequências de quatro letras iguais no DNA
+        // const hasSequences = checkDnaSequences(dna);
+
+        // const horizontal = checkHorizontal(dna);
+        // const vertical = checkVertical(dna);
+        // const diagonalP = checkDiagonalPrincipal(dna);
+        // const diagonalS = checkDiagonalSecundaria(dna);
+
+        // console.log('horizontal', horizontal);
+        // console.log('vertical', vertical);
+        // console.log('diagonalP', diagonalP);
+        // console.log('diagonalS', diagonalS);
+
+        // // Imprime o resultado no console
+        // console.log('O DNA contém sequências iguais de quatro letras:', hasSequences);
     }
 
+
+    const handleShowPopup = () => {
+        setShowPopup(true); // Define o estado para exibir o popup
+      };
 
 
     // Função para verificar sequências horizontais de quatro letras iguais
@@ -101,7 +117,7 @@ const DnaMatrix: React.FC = () => {
     }
 
 
-    /* @HandleChange
+    /* HandleChange
     Processo de verificação de caracteres permitidos, a atualização da matriz dna, 
     e a manutenção da lógica de mudança para a linha e coluna correspondentes. */
     const handleChange = (
@@ -138,7 +154,7 @@ const DnaMatrix: React.FC = () => {
 
     };
 
-    /* @HandleChange
+    /* HandleChange
     Função que verificar a tecla precionada, se for DELETE ele volta para o input anterior, 
     demais teclas de setas move o foco dos inputs.*/
     const handleKeyDown = (
@@ -193,11 +209,17 @@ const DnaMatrix: React.FC = () => {
     };
 
     return (
+        <>
+        {/* Exibe o AlertPopup somente se showPopup for verdadeiro */}
+        {/* {showPopup && <ResultPopup message="Esta é uma mensagem de alerta!" />} */}
+        
+        <ResultPopup message="Esta é uma mensagem de alerta!" />
         <div className='text-center'>
+            
             <div className='text-center'>
                 <div className='flex-colunms'>
                     <label className='text-[28px] block leading-[18px]'> {rows}</label>
-                    <label className='text-[12px]'>Linhas</label>
+                    <label className='text-[12px] text-[#afb3ff]'>Linhas</label>
                 </div>
                 <input
                     className='w-[40vw]'
@@ -213,16 +235,17 @@ const DnaMatrix: React.FC = () => {
             </div>
             <div className='text-center'>
                 <div className='flex-colunms'>
-                    <label className='text-[28px] block leading-[18px]'>{cols} </label>
-                    <label className='text-[12px]'>Colunas</label>
+                    <label className='text-[28px] block leading-[18px] pt-2'>{cols} </label>
+                    <label className='text-[12px] text-[#afb3ff]'>Colunas</label>
                 </div>
 
                 <input
-                    className='w-[40vw]'
+                    className='w-[40vw] bg-[#e81153]'
                     type="range"
                     min="1"
                     max="20"
                     value={cols}
+
                     onChange={(e) => {
                         setCols(parseInt(e.target.value));
                         setDna(Array(rows).fill(Array(parseInt(e.target.value)).fill(''))); //Atualiza matriz alterando a quantidade de Colunas
@@ -252,14 +275,15 @@ const DnaMatrix: React.FC = () => {
             <div>
                 <button
                     className="
-                            bg-blue-500
+                            rounded-[3rem]
+                            bg-[#e81153]
                             text-white
                             font-bold
-                            px-6
-                            py-3
+                            px-[4rem]
+                            py-[0.8rem]
                             rounded-lg
                             shadow-md
-                            hover:bg-blue-600
+                            hover:bg-[#ff135b]
                             focus:outline-none
                             focus:ring
                             focus:ring-blue-300
@@ -267,10 +291,12 @@ const DnaMatrix: React.FC = () => {
                             ease-in-out
                             duration-200
                         "
+                        style={{borderRadius: '3rem !important'}}
                     onClick={handleCheckDNA} // Chama o callback quando clicado
-                >Check DNA</button>
+                >CHECK DNA</button>
             </div>
         </div>
+        </>
     );
 };
 

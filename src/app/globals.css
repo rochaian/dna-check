@@ -31,3 +31,28 @@ body {
     text-wrap: balance;
   }
 }
+
+/* No seu arquivo CSS customizado para alterar a cor do input range */
+
+
+input[type="range"]::-webkit-slider-runnable-track {
+  background: rgb(255, 255, 255); 
+  height: 16px; 
+  border-radius: 3rem; 
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  background: #e81153; 
+  width: 30px;
+  height: 30px;
+  border-radius: 3rem; 
+}
+
+/* Estiliza para Firefox */
+input[type="range"]::-moz-range-track {
+  background: white;
+}
+
+input[type="range"]::-moz-range-thumb {
+  background: #e81153;
+}
